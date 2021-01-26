@@ -1,0 +1,39 @@
+{
+  "name": "key-conversion",
+  "version": "1.0.0",
+  "description": "key conversion tools for key, between der and pem",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.prod.js",
+    "start": "webpack-dev-server --open --config webpack.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Wangmmx/key-conversion.git"
+  },
+  "keywords": [
+    "key",
+    "convert",
+    "secp256k1",
+    "secp384r1",
+    "pem",
+    "hex",
+    "der",
+    "asn1",
+    "decode",
+    "encode",
+    "privateKey",
+    "publicKey"
+  ],
+  "author": "Wangmmx",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Wangmmx/key-conversion/issues"
+  },
+  "homepage": "https://github.com/Wangmmx/key-conversion#readme",
+  "dependencies": {
+    "asn1.js": "^5.4.1",
+    "buffer": "^6.0.2"
+  }
+}
