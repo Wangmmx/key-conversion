@@ -1,6 +1,6 @@
 {
   "name": "key-conversion",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "key conversion tools for key, between der and pem",
   "main": "index.js",
   "scripts": {
