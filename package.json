@@ -34,6 +34,7 @@
   "homepage": "https://github.com/Wangmmx/key-conversion#readme",
   "dependencies": {
     "asn1.js": "^5.4.1",
-    "buffer": "^6.0.2"
+    "buffer": "^6.0.2",
+    "elliptic": "^6.5.3"
   }
 }
