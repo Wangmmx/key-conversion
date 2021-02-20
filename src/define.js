@@ -29,13 +29,26 @@ let PrivateKeyInfo = asn1.define('PrivateKeyInfo', function() {
     );
 });
 
-let ECPrivateKey = asn1.define('ECPrivateKey', function() {
+let ECPrivateKeyP384 = asn1.define('ECPrivateKeyP384', function() {
     this.seq().obj(
         this.key('version').int(),
         this.key('privateKey').octstr(),
         this.key('publicKey').explicit(1).optional().bitstr()
     );
 });
+
+
+
+let ECPrivateKey = asn1.define('ECPrivateKey', function() {
+    this.seq().obj(
+        this.key('version').int(),
+        this.key('privateKey').octstr(),
+        this.key('parameters').explicit(0).objid().optional(),
+        this.key('publicKey').explicit(1).bitstr().optional()
+    );
+});
+
+
 
 let ECParameters = asn1.define('ECParameters', function() {
     this.choice({
@@ -51,6 +64,7 @@ module.exports = {
     AlgorithmIdentifier: AlgorithmIdentifier,
     PublicKeyInfo: PublicKeyInfo,
     PrivateKeyInfo: PrivateKeyInfo,
+    ECPrivateKeyP384: ECPrivateKeyP384,
     ECPrivateKey: ECPrivateKey,
     ECParameters: ECParameters
 };
