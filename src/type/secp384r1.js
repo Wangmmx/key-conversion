@@ -3,6 +3,23 @@ const asn1Define = require('../define');
 const elliptic = require('elliptic');
 const EC = elliptic.ec;
 
+/**
+ * convert publicKey to DER format
+ * @param type secp256k1/secp384r1/secp521r1
+ * @param rawPublicKey
+ */
+function convertPublicKeyToDer(rawPublicKey) {
+    return convertPublicKey(rawPublicKey, 'DER');
+}
+
+/**
+ * convert publicKey to PEM format
+ * @param type secp256k1/secp384r1/secp521r1
+ * @param rawPublicKey
+ */
+function convertPublicKeyToPem(rawPublicKey) {
+    return convertPublicKey(rawPublicKey, 'PEM');
+}
 
 /**
  *
@@ -46,6 +63,24 @@ function convertPublicKey(rawPublicKey, format) {
     } else throw new Error('Invalid Key Format')
 }
 
+
+/**
+ * convert PrivateKey to DER format
+ * @param type secp256k1/secp384r1/secp521r1
+ * @param rawPrivateKey
+ */
+function convertPrivateKeyToDer(rawPrivateKey) {
+    return convertPrivateKey(rawPrivateKey, 'DER');
+}
+
+/**
+ * convert PrivateKey to PEM format
+ * @param type secp256k1/secp384r1/secp521r1
+ * @param rawPrivateKe
+ */
+function convertPrivateKeyToPem(rawPrivateKey) {
+    return convertPrivateKey( rawPrivateKey, 'PEM');
+}
 
 /**
  *
