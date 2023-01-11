@@ -1,23 +1,59 @@
 const asn1Define = require('../define');
-const EC = require('elliptic').ec;
+const elliptic = require('elliptic');
+const EC = elliptic.ec;
+const ecdsaCurve = elliptic.curves;
 
 /**
  * generate random keys
  * @param type secp256k1/secp384r1/secp521r1
  * @param rawPublicKey
  */
-function generateKeys() {
+function generateKeys(privateKeyHex) {
     var ec = new EC('secp256k1');
-    var key = ec.genKeyPair();
+    var key;
+    if (privateKeyHex) {
+        console.log('aaa')
+        key = ec.keyFromPrivate(privateKeyHex, 'hex')
+    } else {
+        key = ec.genKeyPair();
+    }
     var privateK = key.getPrivate('hex');
     var publicK = key.getPublic('hex');
     var publicKCompact = key.getPublic(true, 'hex');
+    
     return {
         type: "secp256k1",
         privateKey: privateK,
         publicKey: publicK,
         publicKCompact: publicKCompact
     }
+}
+
+function checkIsValid(privateKeyHex, sig, type='hex') {
+    var ec = new EC('secp256k1');
+    // var msg = 'check is valid signature'
+    var msg = '123'
+
+    var sigExpected = ec.sign(msg, privateKeyHex, 'hex');
+    console.log(Buffer.from(sigExpected.toDER()).toString('hex'));
+    console.log(Buffer.from(sigExpected.toDER()).toString('base64'))
+
+    var buffer = Buffer.alloc(65);
+    buffer.writeUInt8(sigExpected.recoveryParam + 27 + 4, 0);
+    sigExpected.r.toArrayLike(Buffer, 'be', 32).copy(buffer, 1);
+    sigExpected.s.toArrayLike(Buffer, 'be', 32).copy(buffer, 33);
+    sigExpected = buffer;
+    
+    // sigExpected = Buffer.from(sigExpected.toDER()).toString('hex')
+    console.log(sigExpected.toString('hex'))
+    console.log(sigExpected.toString('base64'))
+
+    // var s = ec.ECSignature.parseCompact(sig);
+
+    var key = ec.keyFromPrivate(privateKeyHex, 'hex')
+    var valid = ec.verify(msg, sig, key, 'hex')
+    console.log('valid', valid)
+    //
 }
 
 
@@ -153,7 +189,7 @@ function convertPrivateKey(rawPrivateKey, format) {
                     privateKey: rawPrivateKey,
                     parameters:  [1, 3, 132, 0, 10],
                     publicKey: publicKey},
-        'pem', {label: 'PRIVATE KEY'});
+        'pem', {label: 'EC PRIVATE KEY'});
 
 
     if (format === 'DER') {
@@ -166,6 +202,7 @@ function convertPrivateKey(rawPrivateKey, format) {
 
 module.exports = {
     generateKeys: generateKeys,
+    checkIsValid: checkIsValid,
     convertPublicKeyToDer: convertPublicKeyToDer,
     convertPublicKeyToPem: convertPublicKeyToPem,
     convertPrivateKeyToDer: convertPrivateKeyToDer,
