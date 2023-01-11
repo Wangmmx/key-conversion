@@ -8,17 +8,22 @@ Currently only supports secp384r1
 Usage:
 ```
 var keyConversion = require('key-conversion');
-let rawPub = '04....';
-let pubType = 'secp384r1'; //'secp384r1' or'secp521r1'
-let pubDER = keyConversion.convertPublicKeyToDer(pubType, rawPub);
-var pubPEM = keyConversion.convertPublicKeyToPem(pubType, rawPub);
+let type = keyConversion.handleKeyConvert('secp256k1');
+let ret = type.generateKeys()
+console.log('generated keys: ')
+console.log(ret)
 
+let pubDER = type.convertPublicKeyToDer(ret.publicKey);
+console.log('pubDER: ' + pubDER);
+let pubPEM = type.convertPublicKeyToPem(ret.publicKey);
+console.log('pubPEM: ' + '\n' + pubPEM);
 
-let rawPrivate = 'e7...';
-let privateType = 'secp384r1'; //'secp384r1' or'secp521r1'
-let privateDER = keyConversion.convertPrivateKeyToDer(privateType, rawPrivate);
-var privatePEM = keyConversion.convertPrivateKeyToPem(privateType, rawPrivate);
+let privateDER = type.convertPrivateKeyToDer(ret.privateKey);
+console.log('privateDER: ' + privateDER);
+let privatePEM = type.convertPrivateKeyToPem(ret.privateKey);
+console.log('privatePEM: ' + '\n' + privatePEM);    });
 
+secp256k1 can be replaced by 'secp256r1', 'secp384r1', 'secp521r1'
 
 ```
 Release Notes:  
