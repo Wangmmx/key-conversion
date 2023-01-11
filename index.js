@@ -39,12 +39,14 @@ function convertPrivateKeyToPem(rawPrivateKey) {
 }
 /**
  *
- * @param type secp256k1/secp384r1/secp521r1
+ * @param type secp256k1/secp256r1/secp384r1/secp521r1
  */
 function handleKeyConvert(type) {
         switch (type) {
             case 'secp256k1':
                 return Type.secp256k1Type;
+            case 'secp256r1':
+                return Type.secp256r1Type;
             case 'secp384r1':
                 return Type.secp384r1Type;
             case 'secp521r1':
