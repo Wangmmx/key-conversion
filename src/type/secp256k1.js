@@ -1,7 +1,24 @@
 const asn1Define = require('../define');
-const elliptic = require('elliptic');
-const EC = elliptic.ec;
+const EC = require('elliptic').ec;
 
+/**
+ * generate random keys
+ * @param type secp256k1/secp384r1/secp521r1
+ * @param rawPublicKey
+ */
+function generateKeys() {
+    var ec = new EC('secp256k1');
+    var key = ec.genKeyPair();
+    var privateK = key.getPrivate('hex');
+    var publicK = key.getPublic('hex');
+    var publicKCompact = key.getPublic(true, 'hex');
+    return {
+        type: "secp256k1",
+        privateKey: privateK,
+        publicKey: publicK,
+        publicKCompact: publicKCompact
+    }
+}
 
 
 /**
@@ -148,6 +165,7 @@ function convertPrivateKey(rawPrivateKey, format) {
 
 
 module.exports = {
+    generateKeys: generateKeys,
     convertPublicKeyToDer: convertPublicKeyToDer,
     convertPublicKeyToPem: convertPublicKeyToPem,
     convertPrivateKeyToDer: convertPrivateKeyToDer,
