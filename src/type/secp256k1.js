@@ -1,7 +1,6 @@
 const asn1Define = require('../define');
 const elliptic = require('elliptic');
 const EC = elliptic.ec;
-const ecdsaCurve = elliptic.curves;
 
 /**
  * generate random keys
@@ -12,7 +11,6 @@ function generateKeys(privateKeyHex) {
     var ec = new EC('secp256k1');
     var key;
     if (privateKeyHex) {
-        console.log('aaa')
         key = ec.keyFromPrivate(privateKeyHex, 'hex')
     } else {
         key = ec.genKeyPair();
@@ -29,31 +27,31 @@ function generateKeys(privateKeyHex) {
     }
 }
 
-function checkIsValid(privateKeyHex, sig, type='hex') {
+function sign(privateKeyHex, msg) {
     var ec = new EC('secp256k1');
-    // var msg = 'check is valid signature'
-    var msg = '123'
 
     var sigExpected = ec.sign(msg, privateKeyHex, 'hex');
-    console.log(Buffer.from(sigExpected.toDER()).toString('hex'));
-    console.log(Buffer.from(sigExpected.toDER()).toString('base64'))
+    var sig = Buffer.from(sigExpected.toDER()).toString('hex');
+    var sigBase64 = Buffer.from(sigExpected.toDER()).toString('base64');
 
-    var buffer = Buffer.alloc(65);
-    buffer.writeUInt8(sigExpected.recoveryParam + 27 + 4, 0);
-    sigExpected.r.toArrayLike(Buffer, 'be', 32).copy(buffer, 1);
-    sigExpected.s.toArrayLike(Buffer, 'be', 32).copy(buffer, 33);
-    sigExpected = buffer;
+    var signature = Buffer.alloc(65);
+    signature.writeUInt8(sigExpected.recoveryParam + 27 + 4, 0);
+    sigExpected.r.toArrayLike(Buffer, 'be', 32).copy(signature, 1);
+    sigExpected.s.toArrayLike(Buffer, 'be', 32).copy(signature, 33);
     
-    // sigExpected = Buffer.from(sigExpected.toDER()).toString('hex')
-    console.log(sigExpected.toString('hex'))
-    console.log(sigExpected.toString('base64'))
+    
+    return {
+        sig: sig,
+        sigBase64: sigBase64,
+        signature: signature.toString('hex')
+    }
+}
 
-    // var s = ec.ECSignature.parseCompact(sig);
-
-    var key = ec.keyFromPrivate(privateKeyHex, 'hex')
-    var valid = ec.verify(msg, sig, key, 'hex')
-    console.log('valid', valid)
-    //
+function checkIsValid(privateKeyHex, msg, sig) {
+    var ec = new EC('secp256k1');
+    var key = ec.keyFromPrivate(privateKeyHex, 'hex');
+    var valid = ec.verify(msg, sig, key, 'hex');
+    return valid
 }
 
 
@@ -163,33 +161,27 @@ function convertPrivateKey(rawPrivateKey, format) {
         algorithm:  [1, 2, 840, 10045, 2, 1],
         parameters: ECParameters
     };
-
-
-
-
+    
     let publicKey = {
         unused: 0,
         data: rawPublicKey
     };
-
-
-
-
+    
     let der = asn1Define.ECPrivateKey.encode({
-                    version: 1,
-                    privateKey: rawPrivateKey,
-                    parameters:  [1, 3, 132, 0, 10],
-                    publicKey: publicKey},
-                'der')
+        version: 1,
+        privateKey: rawPrivateKey,
+        parameters:  [1, 3, 132, 0, 10],
+        publicKey: publicKey},
+    'der')
 
 
 
     let pem = asn1Define.ECPrivateKey.encode({
-                    version: 1,
-                    privateKey: rawPrivateKey,
-                    parameters:  [1, 3, 132, 0, 10],
-                    publicKey: publicKey},
-        'pem', {label: 'EC PRIVATE KEY'});
+        version: 1,
+        privateKey: rawPrivateKey,
+        parameters:  [1, 3, 132, 0, 10],
+        publicKey: publicKey},
+    'pem', {label: 'EC PRIVATE KEY'});
 
 
     if (format === 'DER') {
@@ -202,6 +194,7 @@ function convertPrivateKey(rawPrivateKey, format) {
 
 module.exports = {
     generateKeys: generateKeys,
+    sign: sign,
     checkIsValid: checkIsValid,
     convertPublicKeyToDer: convertPublicKeyToDer,
     convertPublicKeyToPem: convertPublicKeyToPem,

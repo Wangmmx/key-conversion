@@ -5,9 +5,33 @@ describe('key-convert', function () {
     
     it('secp256k1', function () {
         let type = keyConversion.handleKeyConvert('secp256k1');
-        let ret = type.generateKeys('87d83da6f346b97c31b8db4b171b3b57fe42b3955b55be800cd5405780960e48')
-        console.log('generated keys: ')
-        console.log(ret)
+        let msg = 'check is valid signature';
+        
+        //for random keys
+        let randomKeys = type.generateKeys();
+        console.log('generated keys: ');
+        console.log(randomKeys);
+
+        let pubDERRandomKey = type.convertPublicKeyToDer(randomKeys.publicKey);
+        console.log('pubDERRandomKey: ' + pubDERRandomKey);
+        let pubPEMRandomKey = type.convertPublicKeyToPem(randomKeys.publicKey);
+        console.log('pubPEMRandomKey: ' + '\n' + pubPEMRandomKey);
+
+        let privateDERRandomKey = type.convertPrivateKeyToDer(randomKeys.privateKey);
+        console.log('privateDERRandomKey: ' + privateDERRandomKey);
+        let privatePEMRandomKey = type.convertPrivateKeyToPem(randomKeys.privateKey);
+        console.log('privatePEMRandomKey: ' + '\n' + privatePEMRandomKey);
+        
+        let signResult = type.sign(randomKeys.privateKey, msg);
+        let isValid = type.checkIsValid(randomKeys.privateKey, msg, signResult.sig);
+        console.log(isValid);
+        
+        console.log('******');
+        // for given privateKey
+        let privateKeyHex = '87d83da6f346b97c31b8db4b171b3b57fe42b3955b55be800cd5405780960e48';
+        let ret = type.generateKeys(privateKeyHex)
+        console.log('generated keys: ');
+        console.log(ret);
         
         let pubDER = type.convertPublicKeyToDer(ret.publicKey);
         console.log('pubDER: ' + pubDER);
@@ -17,15 +41,12 @@ describe('key-convert', function () {
         let privateDER = type.convertPrivateKeyToDer(ret.privateKey);
         console.log('privateDER: ' + privateDER);
         let privatePEM = type.convertPrivateKeyToPem(ret.privateKey);
-        console.log('privatePEM: ' + '\n' + privatePEM);    
+        console.log('privatePEM: ' + '\n' + privatePEM);
+
         
-        let isValid = type.checkIsValid('87d83da6f346b97c31b8db4b171b3b57fe42b3955b55be800cd5405780960e48', '3044022038a1ffaffaab01e9c0a8dc0cc1706a4764d4629513cd83f7c9f26de9f4b75175022043bc625bb871225fea9181fbce48a77a95f38759622fad2571cca30ae5c4a2f0')
-        console.log(isValid)
-        
-        // console.log(Buffer.from('3044022038a1ffaffaab01e9c0a8dc0cc1706a4764d4629513cd83f7c9f26de9f4b75175022043bc625bb871225fea9181fbce48a77a95f38759622fad2571cca30ae5c4a2f0').toString('base64'))
-        
-        //MEUCIQCd+gMs8zKhd470LFrB7+LMF+nTkQ2GQwdTVc69L7Sd7AIgZOD5AVEkuwre639/nBShK1kmizSzcidkPCpxLBX0lQ4=
-        //MEUCIQDa6tJmBKoD4PwQPyipCnaqkaJfNB1sAtSEBrsJZ1W4MgIgHSGPBTG/CQUAti01HrR7S+c0oVPgYBRe92kHeDCiKzM=
+        var signResult2 = type.sign(privateKeyHex, msg);
+        let isValid2 = type.checkIsValid(privateKeyHex, msg, signResult2.sig);
+        console.log(isValid2)
     });
 
 
